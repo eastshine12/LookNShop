@@ -19,6 +19,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .headers().frameOptions().disable().and() // h2-console을 위한 설정. 나중에 사용하지 않을 때 삭제
                 .httpBasic().disable() // ui를 사용하는 기본값 시큐리티 설정을 비활성화
                 .csrf().disable() // csrf 보안 비활성화
                 .sessionManagement()

@@ -36,7 +36,10 @@ class UserServiceTest {
 
         // given
 
-        UserCreateRequest req = new UserCreateRequest("test1", "1q2w3e4r!");
+        UserCreateRequest req = UserCreateRequest.builder()
+                .loginId("test1")
+                .password("1q2w3e4r!")
+                .build();
 
         User mockUser = User.builder()
                 .loginId("test1")

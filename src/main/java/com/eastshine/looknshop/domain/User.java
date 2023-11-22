@@ -38,7 +38,7 @@ public class User extends BaseTime {
 
 
     @Builder
-    public User (String loginId, String password, String nickname, String email, String phone, Grade grade, Role role) {
+    public User (String loginId, String password, String name, String nickname, String email, String phone, Grade grade, Role role) {
         this.loginId = loginId;
         this.password = password;
         this.name = name;

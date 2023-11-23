@@ -19,11 +19,11 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<Long> join(@RequestBody @Valid UserCreateRequest request) {
+    public ResponseEntity<String> join(@RequestBody @Valid UserCreateRequest request) {
         log.info("UserController join()");
         Long id = userService.join(request);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(id);
+        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully. id = " + id);
     }
 
 }

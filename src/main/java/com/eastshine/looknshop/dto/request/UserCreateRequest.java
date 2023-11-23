@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Getter @Setter
+@Data
 public class UserCreateRequest {
 
     @NotNull

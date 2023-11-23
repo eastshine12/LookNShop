@@ -4,10 +4,15 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE users u SET u.is_deleted = true, u.deleted_at = now() WHERE u.id = ?")
 @Table(name = "users")
 @Entity
 public class User extends BaseTime {
@@ -35,6 +40,10 @@ public class User extends BaseTime {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    private boolean isDeleted;
+
+    private LocalDateTime deletedAt;
 
 
     @Builder

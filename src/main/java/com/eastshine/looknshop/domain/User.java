@@ -4,8 +4,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -36,11 +36,15 @@ public class User extends BaseTime {
     private String phone;
 
     @Enumerated(EnumType.STRING)
-    private Grade grade;
+//    @Column(nullable = false) // dafault 값 지정하기
+    private Grade grade = Grade.NEWBIE;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+//    @Column(nullable = false)
+//    @ColumnDefault("USER") // dafault 값 지정하기
+    private Role role = Role.USER;
 
+    @Column(nullable = false)
     private boolean isDeleted;
 
     private LocalDateTime deletedAt;

@@ -46,13 +46,10 @@ public class UserService {
 
     @Transactional
     public boolean deleteUserById(Long userId) {
-        findUserById(userId);
-        userRepository.deleteById(userId);
-        entityManager.flush();
-        User deletedUser = findUserById(userId);
-        boolean isDeleted = userRepository.existsByIdAndIsDeletedTrue(deletedUser.getId());
-
-        if(!isDeleted) {
+        User deleteUser = findUserById(userId);
+        userRepository.delete(deleteUser);
+        boolean isDeleted = userRepository.existsByIdAndIsDeletedTrue(userId);
+        if (!isDeleted) {
             throw new SoftDeleteFailureException();
         }
 

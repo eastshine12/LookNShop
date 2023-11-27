@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
@@ -15,7 +14,7 @@ import java.time.LocalDateTime;
 @SQLDelete(sql = "UPDATE users u SET u.is_deleted = true, u.deleted_at = now() WHERE u.id = ?")
 @Table(name = "users")
 @Entity
-public class User extends BaseTime {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,19 +35,27 @@ public class User extends BaseTime {
     private String phone;
 
     @Enumerated(EnumType.STRING)
-//    @Column(nullable = false) // dafault 값 지정하기
-    private Grade grade = Grade.NEWBIE;
+    @Column(nullable = false)
+    private Grade grade;
 
     @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    @ColumnDefault("USER") // dafault 값 지정하기
-    private Role role = Role.USER;
+    @Column(nullable = false)
+    private Role role;
 
     @Column(nullable = false)
     private boolean isDeleted;
 
     private LocalDateTime deletedAt;
 
+    @PrePersist
+    public void prePersist() {
+        if (grade == null) {
+            grade = Grade.NEWBIE;
+        }
+        if (role == null) {
+            role = Role.USER;
+        }
+    }
 
     @Builder
     public User (String loginId, String password, String name, String nickname, String email, String phone, Grade grade, Role role) {

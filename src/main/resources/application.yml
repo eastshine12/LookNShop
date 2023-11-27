@@ -20,3 +20,19 @@ logging:
     # jpa hibernate가 생성하는 sql이 로거를 통해서 찍히도록 하는 설정
     org.hibernate.SQL: debug
 #    org.hibernate.type: trace # 실제 들어가는 파라미터값 찍어주는 설정
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    groups-order: DESC
+    tags-sorter: alpha
+    operations-sorter: method
+    disable-swagger-default-url: true
+    display-request-duration: true
+  api-docs:
+    path: /api-docs
+  show-actuator: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  paths-to-match:
+    - /api/**

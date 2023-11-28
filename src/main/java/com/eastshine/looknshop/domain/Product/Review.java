@@ -4,37 +4,38 @@ import com.eastshine.looknshop.domain.BaseEntity;
 import com.eastshine.looknshop.domain.User;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-public class Product extends BaseEntity {
+public class Review extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
+    @Column(name = "review_id")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
-    private User partner;
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    private int rating;
 
     private String title;
 
     private String content;
 
-    private String thumbnail1;
+    private int helpfulCount;
 
-    private String thumbnail2;
-
-    private int price;
-
-    private BigDecimal discountRate;
-
-    private int totalStock;
+    private String image;
 
     @Column(nullable = false)
     private boolean isDeleted;
 
     private LocalDateTime deletedAt;
+
+
 }

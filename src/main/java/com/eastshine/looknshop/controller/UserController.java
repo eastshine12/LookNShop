@@ -2,6 +2,7 @@ package com.eastshine.looknshop.controller;
 
 import com.eastshine.looknshop.domain.User;
 import com.eastshine.looknshop.dto.request.UserCreateRequest;
+import com.eastshine.looknshop.dto.request.UserLoginRequest;
 import com.eastshine.looknshop.exception.custom.SoftDeleteFailureException;
 import com.eastshine.looknshop.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,6 +31,13 @@ public class UserController {
         Long id = userService.join(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully. id = " + id);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequest request) {
+        log.info("UserController login()");
+
+        return ResponseEntity.status(HttpStatus.OK).body("hello");
     }
 
     @Operation(summary = "회원 조회 API", description = "user_id로 회원 정보를 조회한다.")

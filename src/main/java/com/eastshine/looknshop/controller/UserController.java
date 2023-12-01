@@ -3,7 +3,6 @@ package com.eastshine.looknshop.controller;
 import com.eastshine.looknshop.domain.User;
 import com.eastshine.looknshop.dto.request.UserCreateRequest;
 import com.eastshine.looknshop.dto.request.UserLoginRequest;
-import com.eastshine.looknshop.exception.custom.SoftDeleteFailureException;
 import com.eastshine.looknshop.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,8 +10,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @Slf4j
@@ -36,8 +39,16 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequest request) {
         log.info("UserController login()");
+        userService.validUser(request);
 
-        return ResponseEntity.status(HttpStatus.OK).body("hello");
+        return ResponseEntity.status(HttpStatus.OK).body("login");
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+        log.info("UserController logout()");
+        new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
+        return ResponseEntity.status(HttpStatus.OK).body("logout");
     }
 
     @Operation(summary = "회원 조회 API", description = "user_id로 회원 정보를 조회한다.")
@@ -53,12 +64,8 @@ public class UserController {
     @DeleteMapping("/{userId}")
     public ResponseEntity<String> delete(@PathVariable Long userId) {
         log.info("UserController delete()");
-        boolean isDeleted = userService.deleteUserById(userId);
-        if(isDeleted) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User deleted successfully.");
-        } else {
-            throw new SoftDeleteFailureException();
-        }
+        userService.deleteUserById(userId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User deleted successfully.");
     }
 
 }

@@ -1,5 +1,9 @@
 package com.eastshine.looknshop.domain;
 
+import com.eastshine.looknshop.config.oauth2.OAuth2UserInfo;
+import com.eastshine.looknshop.enums.AuthProvider;
+import com.eastshine.looknshop.enums.Grade;
+import com.eastshine.looknshop.enums.Role;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,6 +38,11 @@ public class User extends BaseEntity {
 
     private String phone;
 
+    private String oauth2Id;
+
+    @Enumerated(EnumType.STRING)
+    private AuthProvider authProvider;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Grade grade;
@@ -58,24 +67,25 @@ public class User extends BaseEntity {
     }
 
     @Builder
-    public User (String loginId, String password, String name, String nickname, String email, String phone, Grade grade, Role role) {
+    public User (String loginId, String password, String name, String nickname, String email, String phone, String oauth2Id, AuthProvider authProvider, Grade grade, Role role) {
         this.loginId = loginId;
         this.password = password;
         this.name = name;
         this.nickname = nickname;
         this.email = email;
         this.phone = phone;
+        this.oauth2Id = oauth2Id;
+        this.authProvider = authProvider;
         this.grade = grade;
         this.role = role;
     }
 
 
-    public enum Grade {
-        NEWBIE, BRONZE, SILVER, GOLD, PLATINUM, DIAMOND
-    }
+    public User update(OAuth2UserInfo oAuth2UserInfo) {
+        this.name = oAuth2UserInfo.getName();
+        this.oauth2Id = oAuth2UserInfo.getOAuth2Id();
 
-    public enum Role {
-        USER, PARTNER, ADMIN
+        return this;
     }
 
 

@@ -1,0 +1,34 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id:
+            client-secret:
+            scope:
+            redirect-uri:
+          naver:
+            client-id:
+            client-secret:
+            client-name:
+            authorization-grant-type:
+            redirect-uri:
+          kakao:
+            client-id:
+            client-authentication-method:
+            client-name:
+            scope:
+            authorization-grant-type:
+            redirect-uri:
+        provider:
+          naver:
+            authorization-uri:
+            token-uri:
+            user-info-uri:
+            user-name-attribute: response
+          kakao:
+            authorization-uri:
+            token-uri:
+            user-info-uri:
+            user-name-attribute: id

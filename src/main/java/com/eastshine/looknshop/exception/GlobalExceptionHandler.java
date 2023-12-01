@@ -1,6 +1,7 @@
 package com.eastshine.looknshop.exception;
 
 import com.eastshine.looknshop.exception.custom.DuplicateLoginIdException;
+import com.eastshine.looknshop.exception.custom.PasswordNotMatchedException;
 import com.eastshine.looknshop.exception.custom.SoftDeleteFailureException;
 import com.eastshine.looknshop.exception.custom.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SoftDeleteFailureException.class)
     public ResponseEntity<String> handleSoftDeleteFailureException(SoftDeleteFailureException e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+    }
+
+    @ExceptionHandler(PasswordNotMatchedException.class)
+    public ResponseEntity<String> handlePasswordNotMatchedException(PasswordNotMatchedException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }
 }
 

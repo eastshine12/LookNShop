@@ -1,4 +1,4 @@
-package com.eastshine.looknshop.repository;
+package com.eastshine.looknshop.config.oauth2;
 
 import com.eastshine.looknshop.util.CookieUtils;
 import org.apache.commons.lang3.StringUtils;

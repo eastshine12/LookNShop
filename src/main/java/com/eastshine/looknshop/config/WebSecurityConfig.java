@@ -1,11 +1,13 @@
 package com.eastshine.looknshop.config;
 
+import com.eastshine.looknshop.config.jwt.JwtAccessDeniedHandler;
+import com.eastshine.looknshop.config.jwt.JwtAuthenticationEntryPoint;
 import com.eastshine.looknshop.config.jwt.JwtTokenFilter;
 import com.eastshine.looknshop.config.jwt.JwtTokenProvider;
+import com.eastshine.looknshop.config.oauth2.CookieAuthorizationRequestRepository;
+import com.eastshine.looknshop.config.oauth2.CustomOAuth2UserService;
 import com.eastshine.looknshop.config.oauth2.OAuth2AuthenticationFailureHandler;
 import com.eastshine.looknshop.config.oauth2.OAuth2AuthenticationSuccessHandler;
-import com.eastshine.looknshop.repository.CookieAuthorizationRequestRepository;
-import com.eastshine.looknshop.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,17 +46,15 @@ public class WebSecurityConfig {
                 // 요청에 대한 사용 권한 체크
                 .and()
                 .authorizeRequests()
-                .antMatchers("/oauth2/**", "/api/users/login", "/api/users/signup").permitAll()
+                .antMatchers("/oauth2/**", "/api/users/login", "/api/users/signup", "/h2-console/**").permitAll()
                 .antMatchers("**exception**").permitAll() // 해당 패턴에 대해 모두 허용
-                .antMatchers("/api/orders").authenticated()
+                .antMatchers("/api/**").authenticated()
                 .anyRequest().authenticated()
 
                 .and()
                 .oauth2Login()
                 .authorizationEndpoint().baseUri("/oauth2/authorize")  // 소셜 로그인 url
                 .authorizationRequestRepository(cookieAuthorizationRequestRepository)  // 인증 요청을 cookie 에 저장
-                .and()
-                .redirectionEndpoint().baseUri("/oauth2/callback/*")  // 소셜 인증 후 redirect url
                 .and()
                 //userService()는 OAuth2 인증 과정에서 Authentication 생성에 필요한 OAuth2User 를 반환하는 클래스를 지정한다.
                 .userInfoEndpoint().userService(customOAuth2UserService)  // 회원 정보 처리
@@ -67,16 +67,17 @@ public class WebSecurityConfig {
                 .clearAuthentication(true)
                 .deleteCookies("JSESSIONID")
 
+                .and()
+                .exceptionHandling()
+                .accessDeniedHandler(new JwtAccessDeniedHandler()) // 권한 예외 처리
+                .authenticationEntryPoint(new JwtAuthenticationEntryPoint()) // 인증 예외 처리
+
                 //jwt filter 설정
                 .and()
                 .addFilterBefore(new JwtTokenFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class); // Username~ 클래스 앞에 JwtTokenFilter를 추가
 
-//                .and()
-//                .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler()) // 권한 예외 처리
-//
-//                .and()
-//                .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint()) // 인증 예외 처리
+
 
 
 

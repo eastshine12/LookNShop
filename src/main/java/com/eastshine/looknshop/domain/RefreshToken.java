@@ -1,6 +1,7 @@
 package com.eastshine.looknshop.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,7 +16,7 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -23,6 +24,7 @@ public class RefreshToken {
     private String refreshToken;
 
 
+    @Builder
     public RefreshToken(User user, String token) {
         this.user = user;
         this.refreshToken = token;

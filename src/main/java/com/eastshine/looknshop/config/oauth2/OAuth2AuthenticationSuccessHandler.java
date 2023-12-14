@@ -1,8 +1,7 @@
 package com.eastshine.looknshop.config.oauth2;
 
 import com.eastshine.looknshop.config.jwt.JwtTokenProvider;
-import com.eastshine.looknshop.dto.response.UserResponseDto;
-import com.eastshine.looknshop.repository.CookieAuthorizationRequestRepository;
+import com.eastshine.looknshop.dto.response.UserLoginResponse;
 import com.eastshine.looknshop.util.CookieUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
 
-import static com.eastshine.looknshop.repository.CookieAuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
+import static com.eastshine.looknshop.config.oauth2.CookieAuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 
 @Slf4j
 @Component
@@ -27,7 +26,7 @@ import static com.eastshine.looknshop.repository.CookieAuthorizationRequestRepos
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     @Value("${oauth.authorizedRedirectUri}")
-    private String redirectUri;
+    private String authorizedRedirectUri;
     private final JwtTokenProvider jwtTokenProvider;
     private final CookieAuthorizationRequestRepository cookieAuthorizationRequestRepository;
 
@@ -35,7 +34,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         String targetUrl = determineTargetUrl(request, response, authentication);
-
+        log.info("OAuth2AuthenticationSuccessHandler onAuthenticationSuccess() targetUrl = {}", targetUrl);
         if (response.isCommitted()) {
             log.debug("Response has already been committed.");
             return;
@@ -52,12 +51,13 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             throw new RuntimeException("redirect URIs are not matched.");
         }
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
-
+        log.info("OAuth2AuthenticationSuccessHandler determineTargetUrl() targetUrl : {}", targetUrl);
         //JWT 생성
-        UserResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
-
+        UserLoginResponse.TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+        log.info("OAuth2AuthenticationSuccessHandler determineTargetUrl() tokenInfo : {}", tokenInfo.toString());
         return UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("token", tokenInfo.getAccessToken())
+                .queryParam("access-token", tokenInfo.getAccessToken())
+                .queryParam("refresh-token", tokenInfo.getRefreshToken())
                 .build().toUriString();
     }
 
@@ -68,12 +68,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private boolean isAuthorizedRedirectUri(String uri) {
         URI clientRedirectUri = URI.create(uri);
-        URI authorizedUri = URI.create(redirectUri);
-
-        if (authorizedUri.getHost().equalsIgnoreCase(clientRedirectUri.getHost())
-                && authorizedUri.getPort() == clientRedirectUri.getPort()) {
-            return true;
-        }
-        return false;
+        URI authorizedUri = URI.create(authorizedRedirectUri);
+        log.info("isAuthorizedRedirectUri() client: {}, server: {}", clientRedirectUri.toString(), authorizedUri.toString());
+        return authorizedUri.getHost().equalsIgnoreCase(clientRedirectUri.getHost())
+                && authorizedUri.getPort() == clientRedirectUri.getPort();
     }
 }

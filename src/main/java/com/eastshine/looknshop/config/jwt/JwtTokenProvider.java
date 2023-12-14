@@ -1,6 +1,6 @@
 package com.eastshine.looknshop.config.jwt;
 
-import com.eastshine.looknshop.dto.response.UserResponseDto;
+import com.eastshine.looknshop.dto.response.UserLoginResponse;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -28,6 +27,8 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider {
 
+    private final RefreshTokenService refreshTokenService;
+
     @Value("${jwt.secretKey}")
     private String secretKey;
 
@@ -42,14 +43,14 @@ public class JwtTokenProvider {
     @Value("${jwt.refresh.expiration}")
     private Long refreshTokenExpirationPeriod;
 
-    private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
-    private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
+//    private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
+//    private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "Bearer";
     private static final String TYPE_ACCESS = "access";
     private static final String TYPE_REFRESH = "refresh";
 
-    private final UserDetailsService userDetailsService;
+
 
     @PostConstruct
     protected void init() {
@@ -59,11 +60,11 @@ public class JwtTokenProvider {
     }
 
     //Authentication 을 가지고 AccessToken, RefreshToken 을 생성하는 메서드
-    public UserResponseDto.TokenInfo generateToken(Authentication authentication) {
+    public UserLoginResponse.TokenInfo generateToken(Authentication authentication) {
         return generateToken(authentication.getName(), authentication.getAuthorities());
     }
 
-    public UserResponseDto.TokenInfo generateToken(String name, Collection<? extends GrantedAuthority> inputAuthorities) {
+    public UserLoginResponse.TokenInfo generateToken(String name, Collection<? extends GrantedAuthority> inputAuthorities) {
         log.info("JwtTokenProvider generateToken()");
         //권한 가져오기
         String authorities = inputAuthorities.stream()
@@ -90,19 +91,24 @@ public class JwtTokenProvider {
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
 
-        return UserResponseDto.TokenInfo.builder()
+
+        UserLoginResponse.TokenInfo tokenInfo = UserLoginResponse.TokenInfo.builder()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
                 .accessTokenExpirationTime(accessTokenExpirationPeriod)
                 .refreshToken(refreshToken)
                 .refreshTokenExpirationTime(refreshTokenExpirationPeriod)
                 .build();
+
+        refreshTokenService.updateOrSaveRefreshToken(name, tokenInfo);
+
+
+        return tokenInfo;
     }
 
 
     public void sendAccessToken(HttpServletResponse response, String accessToken) {
         response.setStatus(HttpServletResponse.SC_OK);
-
         response.setHeader(accessHeader, accessToken);
         log.info("재발급된 Access Token : {}", accessToken);
     }
@@ -162,20 +168,10 @@ public class JwtTokenProvider {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("auth", String.class);
     }
 
-    public String resolveAccessToken(HttpServletRequest req) {
-        log.info("[resolveToken] JwtTokenProvider resolveAccessToken");
+    public String resolveToken(HttpServletRequest req) {
+        log.info("[resolveToken] JwtTokenProvider resolveToken");
 
         String bearerToken = req.getHeader(accessHeader);
-        if (bearerToken != null && bearerToken.startsWith(BEARER_TYPE)) {
-            return bearerToken.substring(7);
-        }
-        return null;
-    }
-
-    public String resolveRefreshToken(HttpServletRequest req) {
-        log.info("[resolveToken] JwtTokenProvider resolveRefreshToken");
-
-        String bearerToken = req.getHeader(refreshHeader);
         if (bearerToken != null && bearerToken.startsWith(BEARER_TYPE)) {
             return bearerToken.substring(7);
         }

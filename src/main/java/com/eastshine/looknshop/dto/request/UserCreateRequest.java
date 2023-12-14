@@ -19,6 +19,7 @@ public class UserCreateRequest {
     private String password;
     private String name;
     private String nickname;
+    @NotNull
     private String email;
     private String phone;
 

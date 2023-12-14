@@ -25,7 +25,8 @@ jwt:
     header: Authorization-refresh
     expiration: 1209600000 # 14일 1000 * 60 * 60 * 24 * 14
 
-
+oauth:
+  authorizedRedirectUri: http://localhost:3000/oauth2/redirect
 
 logging:
   level:

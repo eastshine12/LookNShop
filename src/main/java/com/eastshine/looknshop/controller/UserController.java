@@ -3,6 +3,7 @@ package com.eastshine.looknshop.controller;
 import com.eastshine.looknshop.domain.User;
 import com.eastshine.looknshop.dto.request.UserCreateRequest;
 import com.eastshine.looknshop.dto.request.UserLoginRequest;
+import com.eastshine.looknshop.dto.response.UserLoginResponse;
 import com.eastshine.looknshop.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,8 +29,8 @@ public class UserController {
     private final UserService userService;
 
     @Operation(summary = "회원 가입 API", description = "가입 정보를 받아 중복 ID 조회 후 회원을 등록한다.")
-    @PostMapping
-    public ResponseEntity<String> join(@RequestBody @Valid UserCreateRequest request) {
+    @PostMapping("/signup")
+    public ResponseEntity<String> join(@Valid UserCreateRequest request) {
         log.info("UserController join()");
         Long id = userService.join(request);
 
@@ -37,11 +38,11 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequest request) {
+    public ResponseEntity<UserLoginResponse> login(@RequestBody @Valid UserLoginRequest request, HttpServletResponse response) {
         log.info("UserController login()");
-        userService.validUser(request);
+        UserLoginResponse userLoginResponse = userService.login(request, response);
 
-        return ResponseEntity.status(HttpStatus.OK).body("login");
+        return ResponseEntity.status(HttpStatus.OK).body(userLoginResponse);
     }
 
     @GetMapping("/logout")

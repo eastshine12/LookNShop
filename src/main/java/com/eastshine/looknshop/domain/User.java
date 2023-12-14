@@ -34,6 +34,7 @@ public class User extends BaseEntity {
 
     private String nickname;
 
+    @Column(nullable = false)
     private String email;
 
     private String phone;

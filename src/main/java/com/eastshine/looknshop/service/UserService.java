@@ -52,6 +52,7 @@ public class UserService {
                 .phone(findUser.getPhone())
                 .nickname(findUser.getNickname())
                 .grade(findUser.getGrade())
+                .email(findUser.getEmail())
                 .build();
     }
 

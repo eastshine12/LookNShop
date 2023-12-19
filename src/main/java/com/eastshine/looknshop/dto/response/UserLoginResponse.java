@@ -10,7 +10,7 @@ import lombok.*;
 public class UserLoginResponse {
 
     private Long userId;
-    private String loginId, name, nickname, phone;
+    private String loginId, name, nickname, phone, email;
     private Grade grade;
     private TokenInfo tokenInfo;
 

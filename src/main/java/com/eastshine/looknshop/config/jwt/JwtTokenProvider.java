@@ -142,10 +142,6 @@ public class JwtTokenProvider {
         UserDetails principal = new User(claims.getSubject(), "", authorities);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
 
-        /*
-        UserDetails userDetails = userDetailsService.loadUserByUsername(getUserId(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-        */
     }
 
     private Claims parseClaims(String accessToken) {

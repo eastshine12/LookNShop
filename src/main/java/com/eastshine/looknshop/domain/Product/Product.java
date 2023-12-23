@@ -29,7 +29,7 @@ public class Product extends BaseEntity {
 
     private int price;
 
-    private BigDecimal discountRate;
+    private int discountRate;
 
     private int totalStock;
 

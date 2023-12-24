@@ -1,5 +1,6 @@
 package com.eastshine.looknshop.dto.request;
 
+import com.eastshine.looknshop.domain.Product.Product;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProductCreateRequest {
 
     private String title, content;
-    private int price,discountRate, totalStock;
+    private Integer price,discountRate, totalStock;
     private MultipartFile thumbnail1, thumbnail2;
 
 }

@@ -1,9 +1,6 @@
 package com.eastshine.looknshop.exception;
 
-import com.eastshine.looknshop.exception.custom.DuplicateLoginIdException;
-import com.eastshine.looknshop.exception.custom.PasswordNotMatchedException;
-import com.eastshine.looknshop.exception.custom.SoftDeleteFailureException;
-import com.eastshine.looknshop.exception.custom.UserNotFoundException;
+import com.eastshine.looknshop.exception.custom.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,6 +27,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(PasswordNotMatchedException.class)
     public ResponseEntity<String> handlePasswordNotMatchedException(PasswordNotMatchedException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+    }
+
+    @ExceptionHandler(FileStorageException.class)
+    public ResponseEntity<String> handleFileStorageException(FileStorageException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
 }
 

@@ -2,11 +2,17 @@ package com.eastshine.looknshop.domain.Product;
 
 import com.eastshine.looknshop.domain.BaseEntity;
 import com.eastshine.looknshop.domain.User;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Product extends BaseEntity {
 
@@ -37,4 +43,17 @@ public class Product extends BaseEntity {
     private boolean isDeleted;
 
     private LocalDateTime deletedAt;
+
+    @Builder
+    public Product(User user, String title, String content, String thumbnail1, String thumbnail2, int price, int discountRate, int totalStock) {
+        this.partner = user;
+        this.title = title;
+        this.content = content;
+        this.thumbnail1 = thumbnail1;
+        this.thumbnail2 = thumbnail2;
+        this.price = price;
+        this.discountRate = discountRate;
+        this.totalStock = totalStock;
+    }
+
 }

@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @Tag(name = "Product", description = "Product API")
@@ -24,7 +21,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<String> createPost(@CurrentUser User user, @RequestBody ProductCreateRequest request) {
+    public ResponseEntity<String> createPost(@CurrentUser User user, @ModelAttribute ProductCreateRequest request) {
         log.info("ProductController createPost()");
         Long productId = productService.createPost(user, request);
         return ResponseEntity.status(HttpStatus.CREATED).body("Product registered successfully. id = " + productId);

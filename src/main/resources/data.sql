@@ -1,0 +1,2 @@
+INSERT INTO users (login_id, password, name, email,  grade, role, is_deleted, deleted_at, created_at, updated_at)
+VALUES ('test1', '$2a$12$rdtc5AkEtv1iIXVS9Mg/1e7YkvAWyJ8EWRk5kDng96BdRjmbPk49S', '홍길동', 'test@example.com', 'NEWBIE', 'ADMIN', false, null, now(), now());

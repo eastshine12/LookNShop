@@ -50,4 +50,9 @@ public class FileStorageService {
             throw new FileStorageException("Could not store file " + storeFileName, ex);
         }
     }
+
+    public String getImagePath(String filename) {
+        return uploadDir + filename;
+    }
+
 }

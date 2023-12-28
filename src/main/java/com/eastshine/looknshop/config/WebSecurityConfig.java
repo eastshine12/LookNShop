@@ -46,9 +46,10 @@ public class WebSecurityConfig {
                 // 요청에 대한 사용 권한 체크
                 .and()
                 .authorizeRequests()
-                .antMatchers("/oauth2/**", "/api/users/login", "/api/users/signup", "/h2-console/**").permitAll()
+                .antMatchers("/oauth2/**", "/api/users/login", "/api/users/signup", "/h2-console/**", "/images/**", "/api/**").permitAll()
                 .antMatchers("**exception**").permitAll() // 해당 패턴에 대해 모두 허용
-                .antMatchers("/api/**").authenticated()
+                .antMatchers("/**/partner/**").hasAnyRole("PARTNER", "ADMIN")
+                .antMatchers("/**/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
 
                 .and()
@@ -65,7 +66,7 @@ public class WebSecurityConfig {
                 .and()
                 .logout()
                 .clearAuthentication(true)
-                .deleteCookies("JSESSIONID")
+//                .deleteCookies("JSESSIONID")
 
                 .and()
                 .exceptionHandling()

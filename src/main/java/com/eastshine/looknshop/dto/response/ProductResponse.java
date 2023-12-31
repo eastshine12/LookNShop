@@ -8,8 +8,8 @@ import lombok.*;
 @Data
 public class ProductResponse {
 
-    private Long product_id, partner_id;
-    private String title, content, thumbnail1, thumbnail2;
+    private Long productId, partnerId;
+    private String title, content, thumbnail1, thumbnail2, partnerName;
     private int price, discountRate, totalStock;
 
 }

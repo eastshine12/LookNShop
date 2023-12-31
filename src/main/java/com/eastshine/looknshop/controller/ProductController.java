@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @Tag(name = "Product", description = "Product API")
 @RequestMapping("/api/products")
@@ -33,6 +35,13 @@ public class ProductController {
         log.info("ProductController getProduct()");
         ProductResponse product = productService.getProduct(productId);
         return ResponseEntity.status(HttpStatus.OK).body(product);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ProductResponse>> getAllProducts() {
+        log.info("ProductController getProduct()");
+        List<ProductResponse> products = productService.getAllProducts();
+        return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 
 }

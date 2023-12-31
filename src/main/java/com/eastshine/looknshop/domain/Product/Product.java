@@ -2,6 +2,7 @@ package com.eastshine.looknshop.domain.Product;
 
 import com.eastshine.looknshop.domain.BaseEntity;
 import com.eastshine.looknshop.domain.User;
+import com.eastshine.looknshop.exception.custom.OutOfStockException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -53,6 +54,14 @@ public class Product extends BaseEntity {
         this.price = price;
         this.discountRate = discountRate;
         this.totalStock = totalStock;
+    }
+
+    public void removeStock(int quantity) {
+        int restStock = this.totalStock - quantity;
+        if (restStock < 0) {
+            throw new OutOfStockException("Not enough stock available for product: " + this.title);
+        }
+        this.totalStock = restStock;
     }
 
 }

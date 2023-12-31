@@ -38,5 +38,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleProductNotFoundException(UserNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
+
+    @ExceptionHandler(OutOfStockException.class)
+    public ResponseEntity<String> handleOutOfStockException(OutOfStockException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+    }
 }
 

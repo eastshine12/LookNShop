@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -39,9 +42,21 @@ public class ProductService {
 
     public ProductResponse getProduct(Long productId) {
         Product product = getProductById(productId);
+        return convertToProductResponse(product);
+    }
+
+    public List<ProductResponse> getAllProducts() {
+        List<Product> products = productRepository.findAll();
+        return products.stream()
+                .map(this::convertToProductResponse)
+                .collect(Collectors.toList());
+    }
+
+    private ProductResponse convertToProductResponse(Product product) {
         return ProductResponse.builder()
-                .product_id(product.getId())
-                .partner_id(product.getPartner().getId())
+                .productId(product.getId())
+                .partnerId(product.getPartner().getId())
+                .partnerName(product.getPartner().getName())
                 .title(product.getTitle())
                 .content(product.getContent())
                 .price(product.getPrice())

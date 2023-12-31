@@ -1,10 +1,15 @@
 package com.eastshine.looknshop.domain;
 
 import com.eastshine.looknshop.domain.Product.Product;
-import com.eastshine.looknshop.domain.Product.ProductOption;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class OrderItem {
 
@@ -14,8 +19,8 @@ public class OrderItem {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Product_option_id")
-    private ProductOption ProductOption;
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
@@ -25,5 +30,16 @@ public class OrderItem {
 
     private int orderPrice;
 
+    @Builder
+    public OrderItem(Product product, Order order, int quantity, int orderPrice) {
+        this.product = product;
+        this.order = order;
+        this.quantity = quantity;
+        this.orderPrice = orderPrice;
+    }
+
+    public int getTotalPrice() {
+        return orderPrice * quantity;
+    }
 
 }

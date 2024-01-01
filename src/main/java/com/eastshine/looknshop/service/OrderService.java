@@ -62,10 +62,14 @@ public class OrderService {
     private Order saveOrder(User user, List<OrderItem> orderItems) {
         Order order = Order.builder()
                 .user(user)
-                .orderItems(orderItems)
+                .orderItems(new ArrayList<>())
                 .orderDate(LocalDateTime.now())
                 .status(Order.OrderStatus.ORDERED)
                 .build();
+
+        for (OrderItem orderItem : orderItems) {
+            order.addOrderItem(orderItem);
+        }
 
         return orderRepository.save(order);
     }

@@ -53,6 +53,11 @@ public class Order extends BaseEntity {
         this.orderCancelReason = orderCancelReason;
     }
 
+    public void addOrderItem(OrderItem orderItem) {
+        orderItems.add(orderItem);
+        orderItem.setOrder(this);
+    }
+
     public int getTotalPrice() {
         int totalPrice = 0;
         for (OrderItem orderItem : orderItems) {

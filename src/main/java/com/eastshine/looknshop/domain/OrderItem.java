@@ -42,4 +42,7 @@ public class OrderItem {
         return orderPrice * quantity;
     }
 
+    public void setOrder(Order order) {
+        this.order = order;
+    }
 }

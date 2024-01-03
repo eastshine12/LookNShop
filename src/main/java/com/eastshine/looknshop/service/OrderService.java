@@ -5,11 +5,8 @@ import com.eastshine.looknshop.domain.OrderItem;
 import com.eastshine.looknshop.domain.Product.Product;
 import com.eastshine.looknshop.domain.User;
 import com.eastshine.looknshop.dto.request.OrderCreateRequest;
-import com.eastshine.looknshop.dto.request.ProductCreateRequest;
-import com.eastshine.looknshop.dto.response.ProductResponse;
 import com.eastshine.looknshop.exception.custom.OutOfStockException;
 import com.eastshine.looknshop.exception.custom.ProductNotFoundException;
-import com.eastshine.looknshop.repository.OrderItemRepository;
 import com.eastshine.looknshop.repository.OrderRepository;
 import com.eastshine.looknshop.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class OrderService {
@@ -30,7 +28,6 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
 
-    @Transactional
     public Long createOrder(User user, List<OrderCreateRequest> request) {
 
         List<OrderItem> orderItems = createOrderItems(request);
@@ -74,7 +71,7 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    private void decreaseProductStock(List<OrderItem> orderItems) {
+    public void decreaseProductStock(List<OrderItem> orderItems) {
         for (OrderItem orderItem : orderItems) {
             Product product = orderItem.getProduct();
             int quantity = orderItem.getQuantity();

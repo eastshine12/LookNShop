@@ -71,7 +71,7 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public void decreaseProductStock(List<OrderItem> orderItems) {
+    public synchronized void decreaseProductStock(List<OrderItem> orderItems) {
         for (OrderItem orderItem : orderItems) {
             Product product = orderItem.getProduct();
             int quantity = orderItem.getQuantity();

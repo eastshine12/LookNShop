@@ -53,7 +53,7 @@ public class User extends BaseEntity {
     private Role role;
 
     @Column(nullable = false)
-    private boolean isDeleted;
+    private Boolean isDeleted;
 
     private LocalDateTime deletedAt;
 
@@ -65,10 +65,13 @@ public class User extends BaseEntity {
         if (role == null) {
             role = Role.USER;
         }
+        if (isDeleted == null) {
+            isDeleted = false;
+        }
     }
 
     @Builder
-    public User (String loginId, String password, String name, String nickname, String email, String phone, String oauth2Id, AuthProvider authProvider, Grade grade, Role role) {
+    public User (String loginId, String password, String name, String nickname, String email, String phone, String oauth2Id, AuthProvider authProvider, Grade grade, Role role, Boolean isDeleted, LocalDateTime deletedAt) {
         this.loginId = loginId;
         this.password = password;
         this.name = name;
@@ -79,6 +82,8 @@ public class User extends BaseEntity {
         this.authProvider = authProvider;
         this.grade = grade;
         this.role = role;
+        this.isDeleted = isDeleted;
+        this.deletedAt = deletedAt;
     }
 
 

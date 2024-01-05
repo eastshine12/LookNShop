@@ -71,7 +71,7 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public synchronized void decreaseProductStock(List<OrderItem> orderItems) {
+    public void decreaseProductStock(List<OrderItem> orderItems) {
         for (OrderItem orderItem : orderItems) {
             Product product = orderItem.getProduct();
             int quantity = orderItem.getQuantity();
@@ -83,5 +83,9 @@ public class OrderService {
         return ((product.getPrice() * (100 - product.getDiscountRate())) / 1000) * 10;
     }
 
-
+    public void decreaseProductStockWithPessimisticLock(long productId, int quantity) {
+        Product product = productRepository.findByIdWithPessimisticLock(productId)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + productId));
+        product.removeStock(quantity);
+    }
 }

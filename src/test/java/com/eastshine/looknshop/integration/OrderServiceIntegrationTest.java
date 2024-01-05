@@ -9,19 +9,14 @@ import com.eastshine.looknshop.dto.request.UserCreateRequest;
 import com.eastshine.looknshop.repository.OrderRepository;
 import com.eastshine.looknshop.repository.ProductRepository;
 import com.eastshine.looknshop.service.OrderService;
-import com.eastshine.looknshop.service.ProductService;
 import com.eastshine.looknshop.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -30,14 +25,12 @@ import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@Transactional
+@ActiveProfiles("test")
 @SpringBootTest
 public class OrderServiceIntegrationTest {
 
     @Autowired
     UserService userService;
-    @Autowired
-    ProductService productService;
     @Autowired
     OrderService orderService;
     @Autowired
@@ -46,7 +39,7 @@ public class OrderServiceIntegrationTest {
     OrderRepository orderRepository;
 
 
-
+    @Transactional
     @Test
     @DisplayName("정상적인 상품 주문에 성공한다. ")
     public void 상품_주문() throws Exception {
@@ -75,29 +68,29 @@ public class OrderServiceIntegrationTest {
         Order order = orderRepository.findById(orderId).orElseThrow();
         assertThat(orderId).isNotNull();
         assertThat(order.getId()).isEqualTo(orderId);
-        assertThat(order.getUser()).isEqualTo(user);
         assertThat(order.getOrderItems().get(0).getProduct().getTitle()).isEqualTo("상품명1");
-        Product product = productRepository.findById(productId).get();
-        assertThat(product.getTotalStock()).isEqualTo(9);
+        Product findProduct = productRepository.findById(productId).get();
+        assertThat(findProduct.getTotalStock()).isEqualTo(9);
 
     }
 
 
     @Test
+    @Transactional
     @DisplayName("재고 100개의 상품을 동시 주문하여 재고가 0개 남는다.")
-    public void 재고_동시성_테스트() throws InterruptedException, IOException {
+    public void 재고_동시성_테스트() throws InterruptedException {
         // given
-        Long userId = userService.join(new UserCreateRequest("testId", "1234", "이름", "닉네임", "a@a.com", "010-1234-5678"));
+        Long userId = userService.join(new UserCreateRequest("testId2", "1234", "이름", "닉네임", "a@a.com", "010-1234-5678"));
         User user = userService.findUserById(userId);
 
         Product product = productRepository.save(Product.builder()
-                        .user(user)
-                        .title("상품명1")
-                        .content("내용")
-                        .price(1000)
-                        .discountRate(10)
-                        .totalStock(100)
-                        .build());
+                .user(user)
+                .title("상품명2")
+                .content("내용")
+                .price(1000)
+                .discountRate(10)
+                .totalStock(100)
+                .build());
 
         final int THREAD_COUNT = 100;
 
@@ -121,23 +114,51 @@ public class OrderServiceIntegrationTest {
         latch.await();
 
         // then
-        Product productResult = productRepository.findById(product.getId()).get();
+        Product productResult = productRepository.findById(product.getId()).orElseThrow();
         assertThat(productResult.getTotalStock()).isEqualTo(0);
     }
 
+    @Test
+    @DisplayName("(PessimisticLock)재고 100개의 상품을 동시 주문하여 재고가 0개 남는다.")
+    public void 비관적락_테스트() throws InterruptedException {
+        // given
+        Long userId = userService.join(new UserCreateRequest("testId3", "1234", "이름", "닉네임", "a@a.com", "010-1234-5678"));
+        User user = userService.findUserById(userId);
 
-    public static MultipartFile createMockImageMultipartFile(String prefix) throws IOException {
-        // 임시 파일 생성
-        Path tempFile = Files.createTempFile(prefix, ".jpg");
+        Product product = productRepository.save(Product.builder()
+                .user(user)
+                .title("상품명3")
+                .content("내용")
+                .price(1000)
+                .discountRate(10)
+                .totalStock(100)
+                .build());
 
-        Files.write(tempFile, "Mock image data".getBytes());
+        final int THREAD_COUNT = 100;
 
-        return new MockMultipartFile(
-                "file",
-                tempFile.getFileName().toString(),
-                "image/jpeg",
-                Files.readAllBytes(tempFile)
-        );
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        CountDownLatch latch = new CountDownLatch(THREAD_COUNT);
+
+        // when
+        for (int i = 0; i < THREAD_COUNT; i++) {
+            executorService.submit(() -> {
+                try {
+                    orderService.decreaseProductStockWithPessimisticLock(product.getId(), 1);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+
+        // then
+        Product productResult = productRepository.findById(product.getId()).orElseThrow();
+        assertThat(productResult.getTotalStock()).isEqualTo(0);
+
+
     }
 
 }

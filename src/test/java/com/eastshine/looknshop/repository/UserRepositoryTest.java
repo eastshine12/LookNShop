@@ -1,7 +1,6 @@
 package com.eastshine.looknshop.repository;
 
 import com.eastshine.looknshop.domain.User;
-import org.hibernate.annotations.Where;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -9,7 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 class UserRepositoryTest {
@@ -55,7 +54,7 @@ class UserRepositoryTest {
 
         // then
         Optional<User> deletedUser = userRepository.findById(savedUser.getId());
-        assertThat(deletedUser.get().isDeleted()).isTrue();
+        assertThat(deletedUser.get().getIsDeleted()).isTrue();
         assertThat(deletedUser.get().getDeletedAt()).isNotNull();
     }
 

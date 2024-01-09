@@ -11,12 +11,15 @@ import com.eastshine.looknshop.repository.OrderRepository;
 import com.eastshine.looknshop.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -25,6 +28,7 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
+    private final RedissonClient redissonClient;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
 
@@ -87,5 +91,25 @@ public class OrderService {
         Product product = productRepository.findByIdWithPessimisticLock(productId)
                 .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + productId));
         product.removeStock(quantity);
+    }
+
+    public void decreaseProductStockWithRedissonLock(long productId, int quantity) {
+        RLock lock = redissonClient.getLock(String.valueOf(productId));
+
+        try {
+            boolean available = lock.tryLock(10, 1, TimeUnit.SECONDS);
+            if (!available) {
+                log.info("Lock 획득 실패 productId : {}", productId);
+                return;
+            }
+            Product product = productRepository.findByIdWithPessimisticLock(productId)
+                    .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + productId));
+            product.removeStock(quantity);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            lock.unlock();
+        }
+
     }
 }

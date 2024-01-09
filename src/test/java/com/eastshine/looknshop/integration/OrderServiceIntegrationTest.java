@@ -161,4 +161,47 @@ public class OrderServiceIntegrationTest {
 
     }
 
+    @Test
+    @DisplayName("(RedissonLock)재고 100개의 상품을 동시 주문하여 재고가 0개 남는다.")
+    public void redisson_테스트() throws InterruptedException {
+        // given
+        Long userId = userService.join(new UserCreateRequest("testId4", "1234", "이름", "닉네임", "a@a.com", "010-1234-5678"));
+        User user = userService.findUserById(userId);
+
+        Product product = productRepository.save(Product.builder()
+                .user(user)
+                .title("상품명4")
+                .content("내용")
+                .price(1000)
+                .discountRate(10)
+                .totalStock(100)
+                .build());
+
+        final int THREAD_COUNT = 100;
+
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        CountDownLatch latch = new CountDownLatch(THREAD_COUNT);
+
+        // when
+        for (int i = 0; i < THREAD_COUNT; i++) {
+            executorService.submit(() -> {
+                try {
+                    orderService.decreaseProductStockWithRedissonLock(product.getId(), 1);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+
+        // then
+        Product productResult = productRepository.findById(product.getId()).orElseThrow();
+        assertThat(productResult.getTotalStock()).isEqualTo(0);
+
+
+    }
+
 }

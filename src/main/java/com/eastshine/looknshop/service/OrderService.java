@@ -1,5 +1,6 @@
 package com.eastshine.looknshop.service;
 
+import com.eastshine.looknshop.annotation.DistributedLock;
 import com.eastshine.looknshop.domain.Order;
 import com.eastshine.looknshop.domain.OrderItem;
 import com.eastshine.looknshop.domain.Product.Product;
@@ -11,7 +12,6 @@ import com.eastshine.looknshop.repository.OrderRepository;
 import com.eastshine.looknshop.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,11 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Transactional
 @RequiredArgsConstructor
 @Service
 public class OrderService {
@@ -32,6 +30,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
 
+    @Transactional
     public Long createOrder(User user, List<OrderCreateRequest> request) {
 
         List<OrderItem> orderItems = createOrderItems(request);
@@ -75,6 +74,7 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    @Transactional
     public void decreaseProductStock(List<OrderItem> orderItems) {
         for (OrderItem orderItem : orderItems) {
             Product product = orderItem.getProduct();
@@ -87,29 +87,18 @@ public class OrderService {
         return ((product.getPrice() * (100 - product.getDiscountRate())) / 1000) * 10;
     }
 
+    @Transactional
     public void decreaseProductStockWithPessimisticLock(long productId, int quantity) {
         Product product = productRepository.findByIdWithPessimisticLock(productId)
                 .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + productId));
         product.removeStock(quantity);
     }
 
+    @DistributedLock(key = "#lockName")
     public void decreaseProductStockWithRedissonLock(long productId, int quantity) {
-        RLock lock = redissonClient.getLock(String.valueOf(productId));
-
-        try {
-            boolean available = lock.tryLock(10, 1, TimeUnit.SECONDS);
-            if (!available) {
-                log.info("Lock 획득 실패 productId : {}", productId);
-                return;
-            }
-            Product product = productRepository.findByIdWithPessimisticLock(productId)
-                    .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + productId));
-            product.removeStock(quantity);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            lock.unlock();
-        }
-
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + productId));
+        product.removeStock(quantity);
+        log.info("Total Stock : {}", product.getTotalStock());
     }
 }

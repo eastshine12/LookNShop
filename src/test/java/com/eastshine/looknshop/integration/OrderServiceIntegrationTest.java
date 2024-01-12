@@ -199,7 +199,7 @@ public class OrderServiceIntegrationTest {
 
         // then
         Product productResult = productRepository.findById(product.getId()).orElseThrow();
-        assertThat(productResult.getTotalStock()).isEqualTo(0);
+        assertThat(productResult.getTotalStock()).isZero();
 
 
     }

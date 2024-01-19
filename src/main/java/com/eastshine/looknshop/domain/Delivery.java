@@ -1,6 +1,9 @@
 package com.eastshine.looknshop.domain;
 
+import com.eastshine.looknshop.enums.DeliveryStatus;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 public class Delivery {
@@ -18,10 +21,12 @@ public class Delivery {
     @JoinColumn(name = "address_id")
     private Address address;
 
-    public enum deliveryStatus {
-        PREPARING, //배송준비
-        SHIPPING, //배송중
-        DELIVERED //배송완료
-    }
+    private LocalDateTime deliveryStartTime; // 배송 시작 시간
+
+    private LocalDateTime deliveryCompletedTime; // 배송 완료 시간
+
+    @Enumerated(EnumType.STRING)
+    private DeliveryStatus deliveryStatus;
+
 }
 

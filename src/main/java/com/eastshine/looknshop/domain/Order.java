@@ -1,5 +1,6 @@
 package com.eastshine.looknshop.domain;
 
+import com.eastshine.looknshop.enums.OrderStatus;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,19 +39,18 @@ public class Order extends BaseEntity {
 
     private String orderCancelReason;
 
-    public enum OrderStatus {
-        ORDERED, //주문완료
-        CANCELLED //주문취소
-    }
+    private LocalDateTime cancelledTime;
+
 
     @Builder
-    public Order(User user, List<OrderItem> orderItems, LocalDateTime orderDate, Payment payment, OrderStatus status, String orderCancelReason) {
+    public Order(User user, List<OrderItem> orderItems, LocalDateTime orderDate, Payment payment, OrderStatus status, String orderCancelReason, LocalDateTime cancelledTime) {
         this.user = user;
         this.orderItems = orderItems;
         this.orderDate = orderDate;
         this.payment = payment;
         this.status = status;
         this.orderCancelReason = orderCancelReason;
+        this.cancelledTime = cancelledTime;
     }
 
     public void addOrderItem(OrderItem orderItem) {

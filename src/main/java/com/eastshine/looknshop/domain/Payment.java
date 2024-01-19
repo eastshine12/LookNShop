@@ -1,5 +1,7 @@
 package com.eastshine.looknshop.domain;
 
+import com.eastshine.looknshop.enums.PaymentMethod;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -22,12 +24,5 @@ public class Payment {
 
     private LocalDateTime paymentTime;
 
-    public enum PaymentMethod {
-        CARD,         // 카드
-        VIRTUAL_ACC,  // 가상계좌
-        EASY_PAY,     // 간편결제
-        MOBILE,       // 휴대폰
-        BANK_TRANSFER // 계좌이체
-    }
 
 }

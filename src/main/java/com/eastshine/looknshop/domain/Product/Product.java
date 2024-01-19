@@ -25,6 +25,10 @@ public class Product extends BaseEntity {
     @JoinColumn(referencedColumnName = "id")
     private User partner;
 
+    @OneToOne
+    @JoinColumn(referencedColumnName = "category_id")
+    private ProductCategory category;
+
     private String title;
 
     private String content;
@@ -45,8 +49,9 @@ public class Product extends BaseEntity {
     private LocalDateTime deletedAt;
 
     @Builder
-    public Product(User user, String title, String content, String thumbnail1, String thumbnail2, int price, int discountRate, int totalStock) {
+    public Product(User user, ProductCategory category, String title, String content, String thumbnail1, String thumbnail2, int price, int discountRate, int totalStock) {
         this.partner = user;
+        this.category = category;
         this.title = title;
         this.content = content;
         this.thumbnail1 = thumbnail1;

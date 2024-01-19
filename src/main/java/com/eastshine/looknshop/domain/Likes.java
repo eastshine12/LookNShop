@@ -1,6 +1,9 @@
 package com.eastshine.looknshop.domain;
 
+import com.eastshine.looknshop.enums.PostType;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 public class Likes {
@@ -14,15 +17,13 @@ public class Likes {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Enumerated(EnumType.STRING)
     private PostType postType;
 
-    private Long entityId;
+    private Long targetId;
 
+    private LocalDateTime likedAt;
 
-
-    public enum PostType {
-        PRODUCT, REVIEW
-    }
 
 }
 

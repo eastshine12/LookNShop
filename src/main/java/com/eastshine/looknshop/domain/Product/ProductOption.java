@@ -13,9 +13,9 @@ public class ProductOption {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @ManyToOne
-    @JoinColumn(name = "option_id")
-    private Option option;
+    private String name;
+
+    private String value;
 
     private int price;
 

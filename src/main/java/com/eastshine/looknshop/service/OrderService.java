@@ -6,6 +6,7 @@ import com.eastshine.looknshop.domain.OrderItem;
 import com.eastshine.looknshop.domain.Product.Product;
 import com.eastshine.looknshop.domain.User;
 import com.eastshine.looknshop.dto.request.OrderCreateRequest;
+import com.eastshine.looknshop.enums.OrderStatus;
 import com.eastshine.looknshop.exception.custom.OutOfStockException;
 import com.eastshine.looknshop.exception.custom.ProductNotFoundException;
 import com.eastshine.looknshop.repository.OrderRepository;
@@ -64,7 +65,7 @@ public class OrderService {
                 .user(user)
                 .orderItems(new ArrayList<>())
                 .orderDate(LocalDateTime.now())
-                .status(Order.OrderStatus.ORDERED)
+                .status(OrderStatus.ORDERED)
                 .build();
 
         for (OrderItem orderItem : orderItems) {

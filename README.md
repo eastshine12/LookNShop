@@ -57,6 +57,155 @@ Java 11, Spring Boot 2.7, IntelliJ, Gradle, MariaDB, Redis, Kafka, Docker
 
 ## ✅ 프로젝트 구조
 
+```
+├─main
+│  ├─generated
+│  ├─java
+│  │  └─com
+│  │      └─eastshine
+│  │          └─looknshop
+│  │              │  LookNShopApplication.java
+│  │              │  
+│  │              ├─annotation
+│  │              │      CurrentUser.java
+│  │              │      DistributedLock.java
+│  │              │      
+│  │              ├─aop
+│  │              │      AopForTransaction.java
+│  │              │      CustomSpringELParser.java
+│  │              │      DistributedLockAop.java
+│  │              │      
+│  │              ├─config
+│  │              │  │  RedissonConfig.java
+│  │              │  │  SwaggerConfig.java
+│  │              │  │  WebConfig.java
+│  │              │  │  WebSecurityConfig.java
+│  │              │  │
+│  │              │  ├─jwt
+│  │              │  │      JwtAccessDeniedHandler.java
+│  │              │  │      JwtAuthenticationEntryPoint.java
+│  │              │  │      JwtTokenFilter.java
+│  │              │  │      JwtTokenProvider.java
+│  │              │  │      RefreshTokenRepository.java
+│  │              │  │      RefreshTokenService.java
+│  │              │  │      TokenService.java
+│  │              │  │
+│  │              │  └─oauth2
+│  │              │          CookieAuthorizationRequestRepository.java
+│  │              │          CustomOAuth2UserService.java
+│  │              │          GoogleOAuth2User.java
+│  │              │          KakaoOAuth2User.java
+│  │              │          NaverOAuth2User.java
+│  │              │          OAuth2AuthenticationFailureHandler.java
+│  │              │          OAuth2AuthenticationSuccessHandler.java
+│  │              │          OAuth2UserInfo.java
+│  │              │          OAuth2UserInfoFactory.java
+│  │              │          UserPrincipal.java
+│  │              │
+│  │              ├─controller
+│  │              │      OrderController.java
+│  │              │      ProductController.java
+│  │              │      UserController.java
+│  │              │
+│  │              ├─domain
+│  │              │  │  Address.java
+│  │              │  │  BaseEntity.java
+│  │              │  │  Cart.java
+│  │              │  │  Delivery.java
+│  │              │  │  Likes.java
+│  │              │  │  Order.java
+│  │              │  │  OrderItem.java
+│  │              │  │  Payment.java
+│  │              │  │  RefreshToken.java
+│  │              │  │  User.java
+│  │              │  │  Wishlist.java
+│  │              │  │
+│  │              │  └─Product
+│  │              │          Product.java
+│  │              │          ProductCategory.java
+│  │              │          ProductOption.java
+│  │              │          Review.java
+│  │              │          UploadFile.java
+│  │              │
+│  │              ├─dto
+│  │              │  ├─request
+│  │              │  │      OrderCreateRequest.java
+│  │              │  │      ProductCreateRequest.java
+│  │              │  │      UserCreateRequest.java
+│  │              │  │      UserLoginRequest.java
+│  │              │  │
+│  │              │  └─response
+│  │              │          ProductResponse.java
+│  │              │          UserLoginResponse.java
+│  │              │
+│  │              ├─enums
+│  │              │      AuthProvider.java
+│  │              │      DeliveryStatus.java
+│  │              │      Grade.java
+│  │              │      OrderStatus.java
+│  │              │      PaymentMethod.java
+│  │              │      PostType.java
+│  │              │      Role.java
+│  │              │
+│  │              ├─exception
+│  │              │  │  GlobalExceptionHandler.java
+│  │              │  │
+│  │              │  └─custom
+│  │              │          DuplicateLoginIdException.java
+│  │              │          FileStorageException.java
+│  │              │          OutOfStockException.java
+│  │              │          PasswordNotMatchedException.java
+│  │              │          ProductNotFoundException.java
+│  │              │          SoftDeleteFailureException.java
+│  │              │          UserNotFoundException.java
+│  │              │
+│  │              ├─repository
+│  │              │      OrderItemRepository.java
+│  │              │      OrderRepository.java
+│  │              │      ProductRepository.java
+│  │              │      UserRepository.java
+│  │              │
+│  │              ├─resolver
+│  │              │      CurrentUserResolver.java
+│  │              │
+│  │              ├─service
+│  │              │      FileStorageService.java
+│  │              │      OrderService.java
+│  │              │      ProductService.java
+│  │              │      UserService.java
+│  │              │
+│  │              └─util
+│  │                      CookieUtils.java
+│  │
+│  └─resources
+│      │  application-oauth.yml
+│      │  application.yml
+│      │  data.sql
+│      │
+│      ├─static
+│      ├─templates
+│      └─upload
+└─test
+    └─java
+        └─com
+            └─eastshine
+                └─looknshop
+                    │  LookNShopApplicationTests.java
+                    │
+                    ├─controller
+                    │      UserControllerTest.java
+                    │
+                    ├─integration
+                    │      OrderServiceIntegrationTest.java
+                    │
+                    ├─repository
+                    │      UserRepositoryTest.java
+                    │
+                    └─service
+                            UserServiceTest.java
+
+
+```
 
 <br />
 

@@ -65,7 +65,7 @@ public class OrderService {
                 .user(user)
                 .orderItems(new ArrayList<>())
                 .orderDate(LocalDateTime.now())
-                .status(OrderStatus.ORDERED)
+                .orderStatus(OrderStatus.ORDERED)
                 .build();
 
         for (OrderItem orderItem : orderItems) {

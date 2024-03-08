@@ -1,6 +1,7 @@
 package com.eastshine.looknshop.domain;
 
 import com.eastshine.looknshop.domain.Product.Product;
+import com.eastshine.looknshop.domain.Product.ProductOption;
 
 import javax.persistence.*;
 
@@ -19,6 +20,10 @@ public class Cart {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
+
+    @ManyToOne
+    @JoinColumn(name = "product_option_id")
+    private ProductOption productOption;
 
     private int quantity;
 

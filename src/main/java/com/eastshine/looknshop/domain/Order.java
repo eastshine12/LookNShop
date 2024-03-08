@@ -35,7 +35,7 @@ public class Order extends BaseEntity {
     private Payment payment;
 
     @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    private OrderStatus orderStatus;
 
     private String orderCancelReason;
 
@@ -43,12 +43,12 @@ public class Order extends BaseEntity {
 
 
     @Builder
-    public Order(User user, List<OrderItem> orderItems, LocalDateTime orderDate, Payment payment, OrderStatus status, String orderCancelReason, LocalDateTime cancelledTime) {
+    public Order(User user, List<OrderItem> orderItems, LocalDateTime orderDate, Payment payment, OrderStatus orderStatus, String orderCancelReason, LocalDateTime cancelledTime) {
         this.user = user;
         this.orderItems = orderItems;
         this.orderDate = orderDate;
         this.payment = payment;
-        this.status = status;
+        this.orderStatus = orderStatus;
         this.orderCancelReason = orderCancelReason;
         this.cancelledTime = cancelledTime;
     }

@@ -26,7 +26,7 @@ public class Product extends BaseEntity {
     private User partner;
 
     @OneToOne
-    @JoinColumn(referencedColumnName = "category_id")
+    @JoinColumn(name = "category_id")
     private ProductCategory category;
 
     private String title;

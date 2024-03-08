@@ -5,11 +5,9 @@ import com.eastshine.looknshop.domain.User;
 import com.eastshine.looknshop.exception.custom.UserNotFoundException;
 import com.eastshine.looknshop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -32,8 +30,8 @@ public class CurrentUserResolver implements HandlerMethodArgumentResolver {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.getPrincipal() != null) {
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            return userRepository.findByEmail(userDetails.getUsername())
+            String userName = authentication.getName();
+            return userRepository.findByEmail(userName)
                     .orElseThrow(UserNotFoundException::new);
         }
 

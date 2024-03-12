@@ -1,7 +1,11 @@
 package com.eastshine.looknshop.domain.Product;
 
+import lombok.*;
+
 import javax.persistence.*;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class ProductCategory {
 
@@ -12,4 +16,9 @@ public class ProductCategory {
 
     private String name;
 
+    @Builder
+    public ProductCategory(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

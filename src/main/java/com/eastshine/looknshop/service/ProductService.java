@@ -64,6 +64,7 @@ public class ProductService {
                 .totalStock(product.getTotalStock())
                 .thumbnail1(getThumbnailPath(product.getThumbnail1()))
                 .thumbnail2(getThumbnailPath(product.getThumbnail2()))
+                .categoryName(product.getCategory().getName())
                 .build();
     }
 
@@ -73,6 +74,6 @@ public class ProductService {
 
 
     public Product getProductById(Long productId) {
-        return productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
+        return productRepository.findByIdWithCategory(productId).orElseThrow(ProductNotFoundException::new);
     }
 }

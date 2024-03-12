@@ -9,7 +9,7 @@ import lombok.*;
 public class ProductResponse {
 
     private Long productId, partnerId;
-    private String title, content, thumbnail1, thumbnail2, partnerName;
+    private String title, content, thumbnail1, thumbnail2, partnerName, categoryName;
     private int price, discountRate, totalStock;
 
 }

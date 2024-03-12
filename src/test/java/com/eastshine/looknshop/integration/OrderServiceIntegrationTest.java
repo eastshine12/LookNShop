@@ -3,10 +3,12 @@ package com.eastshine.looknshop.integration;
 import com.eastshine.looknshop.domain.Order;
 import com.eastshine.looknshop.domain.OrderItem;
 import com.eastshine.looknshop.domain.Product.Product;
+import com.eastshine.looknshop.domain.Product.ProductCategory;
 import com.eastshine.looknshop.domain.User;
 import com.eastshine.looknshop.dto.request.OrderCreateRequest;
 import com.eastshine.looknshop.dto.request.UserCreateRequest;
 import com.eastshine.looknshop.repository.OrderRepository;
+import com.eastshine.looknshop.repository.ProductCategoryRepository;
 import com.eastshine.looknshop.repository.ProductRepository;
 import com.eastshine.looknshop.service.OrderService;
 import com.eastshine.looknshop.service.UserService;
@@ -37,6 +39,8 @@ public class OrderServiceIntegrationTest {
     ProductRepository productRepository;
     @Autowired
     OrderRepository orderRepository;
+    @Autowired
+    ProductCategoryRepository productCategoryRepository;
 
 
     @Transactional
@@ -48,10 +52,12 @@ public class OrderServiceIntegrationTest {
         /* 주문 계정 생성 */
         Long userId = userService.join(new UserCreateRequest("testId", "1234", "이름", "닉네임", "a@a.com", "010-1234-5678"));
         User user = userService.findUserById(userId);
+        ProductCategory productCategory = productCategoryRepository.save(ProductCategory.builder().id(1L).name("하의").build());
 
         /* 주문 상품 생성 */
         Long productId = productRepository.save(Product.builder()
                 .user(user)
+                .category(productCategory)
                 .title("상품명1")
                 .content("내용")
                 .price(1000)
@@ -82,9 +88,11 @@ public class OrderServiceIntegrationTest {
         // given
         Long userId = userService.join(new UserCreateRequest("testId2", "1234", "이름", "닉네임", "a@a.com", "010-1234-5678"));
         User user = userService.findUserById(userId);
+        ProductCategory productCategory = productCategoryRepository.save(ProductCategory.builder().id(1L).name("하의").build());
 
         Product product = productRepository.save(Product.builder()
                 .user(user)
+                .category(productCategory)
                 .title("상품명2")
                 .content("내용")
                 .price(1000)
@@ -124,9 +132,11 @@ public class OrderServiceIntegrationTest {
         // given
         Long userId = userService.join(new UserCreateRequest("testId3", "1234", "이름", "닉네임", "a@a.com", "010-1234-5678"));
         User user = userService.findUserById(userId);
+        ProductCategory productCategory = productCategoryRepository.save(ProductCategory.builder().id(1L).name("하의").build());
 
         Product product = productRepository.save(Product.builder()
                 .user(user)
+                .category(productCategory)
                 .title("상품명3")
                 .content("내용")
                 .price(1000)
@@ -167,9 +177,11 @@ public class OrderServiceIntegrationTest {
         // given
         Long userId = userService.join(new UserCreateRequest("testId4", "1234", "이름", "닉네임", "a@a.com", "010-1234-5678"));
         User user = userService.findUserById(userId);
+        ProductCategory productCategory = productCategoryRepository.save(ProductCategory.builder().id(1L).name("하의").build());
 
         Product product = productRepository.save(Product.builder()
                 .user(user)
+                .category(productCategory)
                 .title("상품명4")
                 .content("내용")
                 .price(1000)

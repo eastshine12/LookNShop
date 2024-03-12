@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,6 +30,9 @@ public class Product extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "category_id")
     private ProductCategory category;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<ProductOption> productOptions = new ArrayList<>();
 
     private String title;
 
@@ -49,9 +54,10 @@ public class Product extends BaseEntity {
     private LocalDateTime deletedAt;
 
     @Builder
-    public Product(User user, ProductCategory category, String title, String content, String thumbnail1, String thumbnail2, int price, int discountRate, int totalStock) {
+    public Product(User user, ProductCategory category, List<ProductOption> productOptions, String title, String content, String thumbnail1, String thumbnail2, int price, int discountRate, int totalStock) {
         this.partner = user;
         this.category = category;
+        this.productOptions = productOptions;
         this.title = title;
         this.content = content;
         this.thumbnail1 = thumbnail1;

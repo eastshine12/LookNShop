@@ -1,10 +1,15 @@
 package com.eastshine.looknshop.domain;
 
 import com.eastshine.looknshop.enums.PaymentMethod;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Payment {
 

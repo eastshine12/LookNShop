@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -24,7 +25,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<String> createProduct(@CurrentUser User user, @ModelAttribute ProductCreateRequest request) {
+    public ResponseEntity<String> createProduct(@CurrentUser User user, @ModelAttribute @Valid ProductCreateRequest request) {
         log.info("ProductController createProduct()");
         Long productId = productService.createProduct(user, request);
         return ResponseEntity.status(HttpStatus.CREATED).body("Product registered successfully. id = " + productId);

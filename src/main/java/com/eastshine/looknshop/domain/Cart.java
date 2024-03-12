@@ -2,9 +2,14 @@ package com.eastshine.looknshop.domain;
 
 import com.eastshine.looknshop.domain.Product.Product;
 import com.eastshine.looknshop.domain.Product.ProductOption;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Cart {
 

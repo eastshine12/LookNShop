@@ -2,10 +2,15 @@ package com.eastshine.looknshop.domain.Product;
 
 import com.eastshine.looknshop.domain.BaseEntity;
 import com.eastshine.looknshop.domain.User;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Review extends BaseEntity {
 

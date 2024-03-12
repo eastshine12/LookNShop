@@ -1,11 +1,16 @@
 package com.eastshine.looknshop.domain;
 
 import com.eastshine.looknshop.domain.Product.Product;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Wishlist extends BaseEntity {
 

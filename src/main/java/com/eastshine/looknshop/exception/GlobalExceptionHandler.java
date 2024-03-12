@@ -39,9 +39,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
+    @ExceptionHandler(ProductCategoryNotFoundException.class)
+    public ResponseEntity<String> handleProductCategoryNotFoundException(ProductCategoryNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
     @ExceptionHandler(OutOfStockException.class)
     public ResponseEntity<String> handleOutOfStockException(OutOfStockException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
+
+    @ExceptionHandler(StockQuantityMismatchException.class)
+    public ResponseEntity<String> handleStockQuantityMismatchException(StockQuantityMismatchException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
 }
 

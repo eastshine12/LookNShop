@@ -9,6 +9,7 @@ import com.eastshine.looknshop.dto.request.ProductOptionDto;
 import com.eastshine.looknshop.dto.response.ProductResponse;
 import com.eastshine.looknshop.exception.custom.ProductCategoryNotFoundException;
 import com.eastshine.looknshop.exception.custom.ProductNotFoundException;
+import com.eastshine.looknshop.exception.custom.SoftDeleteFailureException;
 import com.eastshine.looknshop.exception.custom.StockQuantityMismatchException;
 import com.eastshine.looknshop.repository.ProductCategoryRepository;
 import com.eastshine.looknshop.repository.ProductOptionRepository;
@@ -91,7 +92,7 @@ public class ProductService {
     }
 
     public List<ProductResponse> getAllProducts() {
-        List<Product> products = productRepository.findAll();
+        List<Product> products = productRepository.findAllByIsDeletedFalse();
         return products.stream()
                 .map(this::convertToProductResponse)
                 .collect(Collectors.toList());
@@ -121,5 +122,15 @@ public class ProductService {
 
     public Product getProductById(Long productId) {
         return productRepository.findByIdWithCategoryAndOption(productId).orElseThrow(ProductNotFoundException::new);
+    }
+
+    @Transactional
+    public void deleteProduct(Long productId) {
+        Product product = getProductById(productId);
+        productRepository.delete(product);
+        boolean isDeleted = productRepository.existsByIdAndIsDeletedTrue(productId);
+        if (!isDeleted) {
+            throw new SoftDeleteFailureException();
+        }
     }
 }

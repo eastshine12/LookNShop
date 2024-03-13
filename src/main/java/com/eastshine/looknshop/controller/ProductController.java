@@ -33,16 +33,24 @@ public class ProductController {
 
     @GetMapping("/{productId}")
     public ResponseEntity<ProductResponse> getProduct(@PathVariable Long productId) {
-        log.info("ProductController getProduct()");
+        log.info("ProductController getProduct() id = {}", productId);
         ProductResponse product = productService.getProduct(productId);
         return ResponseEntity.status(HttpStatus.OK).body(product);
     }
 
     @GetMapping
     public ResponseEntity<List<ProductResponse>> getAllProducts() {
-        log.info("ProductController getProduct()");
+        log.info("ProductController getAllProducts()");
         List<ProductResponse> products = productService.getAllProducts();
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
+
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<String> deleteProduct(@PathVariable Long productId) {
+        log.info("ProductController deleteProduct()");
+        productService.deleteProduct(productId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Product deleted successfully.");
+    }
+
 
 }

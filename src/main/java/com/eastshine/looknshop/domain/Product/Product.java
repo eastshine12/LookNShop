@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE product p SET p.is_deleted = true, p.deleted_at = now() WHERE p.product_id = ?")
 @Entity
 public class Product extends BaseEntity {
 
@@ -31,7 +33,7 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "category_id")
     private ProductCategory category;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private List<ProductOption> productOptions = new ArrayList<>();
 
     private String title;

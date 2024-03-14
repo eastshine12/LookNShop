@@ -103,11 +103,13 @@ DROP TABLE IF EXISTS order_item;
 CREATE TABLE order_item (
                     order_item_id BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '주문상품 ID',
                     product_id BIGINT(20) NOT NULL COMMENT '상품 ID',
+                    product_option_id BIGINT(20) NOT NULL COMMENT '상품옵션 ID',
                     order_id BIGINT(20) NOT NULL COMMENT '주문 ID',
                     quantity INT COMMENT '개수',
                     order_price INT COMMENT '구매가격',
                     PRIMARY KEY (order_item_id),
                     FOREIGN KEY (product_id) REFERENCES product(product_id),
+                    FOREIGN KEY (product_option_id) REFERENCES product_option(id),
                     FOREIGN KEY (order_id) REFERENCES orders(order_id)
 );
 

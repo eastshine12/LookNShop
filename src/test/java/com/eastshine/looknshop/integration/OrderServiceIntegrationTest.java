@@ -65,7 +65,7 @@ public class OrderServiceIntegrationTest {
                 .totalStock(10)
                 .build()).getId();
 
-        List<OrderCreateRequest> list = Collections.singletonList(new OrderCreateRequest(productId, 1));
+        List<OrderCreateRequest> list = Collections.singletonList(new OrderCreateRequest(productId, null, 1));
 
         // when
         Long orderId = orderService.createOrder(user, list);

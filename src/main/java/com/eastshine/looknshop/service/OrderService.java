@@ -4,6 +4,7 @@ import com.eastshine.looknshop.annotation.DistributedLock;
 import com.eastshine.looknshop.domain.Order;
 import com.eastshine.looknshop.domain.OrderItem;
 import com.eastshine.looknshop.domain.Product.Product;
+import com.eastshine.looknshop.domain.Product.ProductOption;
 import com.eastshine.looknshop.domain.User;
 import com.eastshine.looknshop.dto.request.OrderCreateRequest;
 import com.eastshine.looknshop.enums.OrderStatus;
@@ -13,13 +14,13 @@ import com.eastshine.looknshop.repository.OrderRepository;
 import com.eastshine.looknshop.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,11 +28,10 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
-    private final RedissonClient redissonClient;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
 
-    @Transactional
+    @DistributedLock(key = "#createOrder")
     public Long createOrder(User user, List<OrderCreateRequest> request) {
 
         List<OrderItem> orderItems = createOrderItems(request);
@@ -39,7 +39,7 @@ public class OrderService {
         decreaseProductStock(orderItems);
 
         return order.getId();
-    };
+    }
 
     private List<OrderItem> createOrderItems(List<OrderCreateRequest> orderCreateRequests) {
         return orderCreateRequests.stream().map(this::createOrderItem).collect(Collectors.toList());
@@ -49,14 +49,22 @@ public class OrderService {
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + request.getProductId()));
 
-        if (product.getTotalStock() < request.getQuantity()) {
-            throw new OutOfStockException("Not enough stock available for product: " + product.getTitle());
+        ProductOption productOption = product.getProductOptions().stream()
+                .filter(option -> Objects.equals(option.getId(), request.getProductOptionId()))
+                .findFirst()
+                .orElse(null);
+
+        if(productOption == null) {
+            throw new ProductNotFoundException("Product Option not found with productOptionId: " + request.getProductOptionId());
+        } else if (productOption.getStockQuantity() < request.getQuantity()) {
+            throw new OutOfStockException("Not enough stock available for product: " + product.getTitle() + " option : " + productOption.getValue());
         }
 
         return OrderItem.builder()
                 .product(product)
+                .productOption(productOption)
                 .quantity(request.getQuantity())
-                .orderPrice(getDiscountPrice(product))
+                .orderPrice(getDiscountPrice(product, productOption))
                 .build();
     }
 
@@ -75,17 +83,18 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    @Transactional
     public void decreaseProductStock(List<OrderItem> orderItems) {
         for (OrderItem orderItem : orderItems) {
             Product product = orderItem.getProduct();
+            ProductOption productOption = orderItem.getProductOption();
             int quantity = orderItem.getQuantity();
             product.removeStock(quantity);
+            productOption.removeStock(quantity);
         }
     }
 
-    private int getDiscountPrice(Product product) {
-        return ((product.getPrice() * (100 - product.getDiscountRate())) / 1000) * 10;
+    private int getDiscountPrice(Product product, ProductOption productOption) {
+        return (((product.getPrice() + productOption.getPrice()) * (100 - product.getDiscountRate())) / 1000) * 10;
     }
 
     @Transactional

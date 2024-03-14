@@ -1,5 +1,6 @@
 package com.eastshine.looknshop.domain.Product;
 
+import com.eastshine.looknshop.exception.custom.OutOfStockException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -37,5 +38,13 @@ public class ProductOption {
         this.value = value;
         this.price = price;
         this.stockQuantity = stockQuantity;
+    }
+
+    public void removeStock(int quantity) {
+        int restStock = this.stockQuantity - quantity;
+        if (restStock < 0) {
+            throw new OutOfStockException("Not enough stock available for productOption: " + this.product.getTitle());
+        }
+        this.stockQuantity = restStock;
     }
 }

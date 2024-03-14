@@ -1,6 +1,7 @@
 package com.eastshine.looknshop.domain;
 
 import com.eastshine.looknshop.domain.Product.Product;
+import com.eastshine.looknshop.domain.Product.ProductOption;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,10 @@ public class OrderItem {
     private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_option_id")
+    private ProductOption productOption;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
 
@@ -31,8 +36,9 @@ public class OrderItem {
     private int orderPrice;
 
     @Builder
-    public OrderItem(Product product, Order order, int quantity, int orderPrice) {
+    public OrderItem(Product product, ProductOption productOption, Order order, int quantity, int orderPrice) {
         this.product = product;
+        this.productOption = productOption;
         this.order = order;
         this.quantity = quantity;
         this.orderPrice = orderPrice;

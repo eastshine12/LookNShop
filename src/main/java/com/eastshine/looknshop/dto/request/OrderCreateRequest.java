@@ -8,7 +8,7 @@ import lombok.*;
 @Data
 public class OrderCreateRequest {
 
-    private Long productId;
+    private Long productId, productOptionId;
     private Integer quantity;
 
 }
